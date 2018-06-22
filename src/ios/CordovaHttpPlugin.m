@@ -45,7 +45,12 @@
 - (void)setRedirect:(AFHTTPSessionManager*)manager {
     [manager setTaskWillPerformHTTPRedirectionBlock:^NSURLRequest * _Nonnull(NSURLSession * _Nonnull session, NSURLSessionTask * _Nonnull task, NSURLResponse * _Nonnull response, NSURLRequest * _Nonnull request) {
         if (redirect) {
-            return request;
+            var newRequest = request;
+            task.originalRequest?.allHTTPHeaderFields?.forEach({ (arg) in
+                let (key, value) = arg
+                newRequest.setValue(value, forHTTPHeaderField: key)
+            });
+            return newRequest;
         } else {
             return nil;
         }
